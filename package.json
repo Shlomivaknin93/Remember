@@ -12,4 +12,9 @@
     "cors": "^2.8.5",
     "puppeteer": "^21.0.0"
   }
+
+  "scripts": {
+  "start": "node index.js",
+  "postinstall": "cross-env PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true"
+}
 }
