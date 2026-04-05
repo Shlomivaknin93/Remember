@@ -20,6 +20,7 @@ let isReady = false;
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
+        executablePath: '/usr/bin/chromium', // הנתיב לדפדפן שהתקנו ב-Dockerfile
         headless: true,
         args: [
             '--no-sandbox',
