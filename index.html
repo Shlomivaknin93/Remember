@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>תזכורות לבת זוג 💚</title>
+<title>תזכורות לאהבה - אוטומציה מלאה 💚</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -120,19 +120,11 @@ input[type=time]:focus{border-color:var(--green);}
 .modal-title{font-size:18px;font-weight:700;margin-bottom:6px;}
 .modal-sub{font-size:13px;color:var(--text2);margin-bottom:1.5rem;}
 .modal-btn{width:100%;padding:11px;background:var(--green);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;font-family:var(--sans);margin-top:10px;}
-.fire-banner{position:fixed;top:1.2rem;left:50%;transform:translateX(-50%) translateY(-150px);background:var(--bg2);border:1.5px solid var(--green);border-radius:var(--rl);padding:1rem 1.4rem;z-index:200;transition:transform 0.3s ease;display:flex;align-items:center;gap:14px;min-width:340px;max-width:90vw;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
-.fire-banner.show{transform:translateX(-50%) translateY(0);}
-.fire-info{flex:1;}
-.fire-title{font-size:14px;font-weight:700;color:var(--text);}
-.fire-msg{font-size:12px;color:var(--text2);margin-top:2px;}
-.fire-send{background:var(--green);color:#fff;border:none;border-radius:9px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans);display:flex;align-items:center;gap:6px;flex-shrink:0;white-space:nowrap;}
-.fire-dismiss{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px;border-radius:6px;}
-.fire-dismiss:hover{color:var(--text);}
 @media(max-width:680px){
   .sidebar{width:100%;height:54px;bottom:auto;flex-direction:row;align-items:center;border-left:none;border-bottom:1px solid var(--border);}
   .logo-area{display:none;}.nav{display:flex;flex-direction:row;padding:0.4rem 0.5rem;overflow-x:auto;}
   .sidebar-bottom{display:none;}.main{margin-right:0;margin-top:54px;padding:1.3rem 1rem;}
-  .stats-grid{grid-template-columns:1fr 1fr;}.fire-banner{min-width:280px;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
 }
 </style>
 </head>
@@ -142,20 +134,10 @@ input[type=time]:focus{border-color:var(--green);}
   <div class="modal">
     <div class="modal-title">📱 הגדרה ראשונה</div>
     <div class="modal-sub">מה מספר הוואטסאפ של בת הזוג שלך?</div>
-    <div class="field"><label class="fl">מספר טלפון (עם קידומת, לדוגמה: +972501234567)</label><input type="tel" id="setup-phone" placeholder="+972..." /></div>
+    <div class="field"><label class="fl">מספר טלפון (בפורמט: 972501234567)</label><input type="tel" id="setup-phone" placeholder="972..." /></div>
     <div class="field"><label class="fl">שמה (אופציונלי)</label><input type="text" id="setup-name" placeholder="לדוגמה: נועה" /></div>
     <button class="modal-btn" onclick="saveSetup()">שמור והתחל ←</button>
   </div>
-</div>
-
-<div class="fire-banner" id="fireBanner">
-  <div style="font-size:24px;flex-shrink:0;">💚</div>
-  <div class="fire-info">
-    <div class="fire-title" id="fireTitle"></div>
-    <div class="fire-msg" id="fireMsg"></div>
-  </div>
-  <button class="fire-send" onclick="openWA()">שלח ב-WhatsApp ↗</button>
-  <button class="fire-dismiss" onclick="dismissBanner()">✕</button>
 </div>
 
 <div class="shell">
@@ -163,7 +145,7 @@ input[type=time]:focus{border-color:var(--green);}
     <div class="logo-area">
       <div class="logo-row">
         <div class="logo-pill">💚</div>
-        <div><div class="logo-title">תזכורות לאהבה</div><div class="logo-sub">WhatsApp reminders</div></div>
+        <div><div class="logo-title">תזכורות לאהבה</div><div class="logo-sub">Fully Automated</div></div>
       </div>
     </div>
     <nav class="nav">
@@ -182,14 +164,14 @@ input[type=time]:focus{border-color:var(--green);}
 
   <main class="main">
     <div class="page on" id="page-add">
-      <div class="ph"><div class="ph-title">תזכורת חדשה</div><div class="ph-sub">תתזמן הודעה שתישלח לוואטסאפ שלה</div></div>
+      <div class="ph"><div class="ph-title">תזכורת חדשה</div><div class="ph-sub">תזמן הודעות שישלחו אוטומטית דרך הבוט</div></div>
       <div class="card">
         <div class="ct">תוכן ההודעה</div>
-        <div class="field"><label class="fl">כותרת (פנימית בלבד — לא נשלחת)</label><input type="text" id="f-title" placeholder="לדוגמה: תזכורת בוקר, חשבתי עלייך..." /></div>
-        <div class="field"><label class="fl">הודעת WhatsApp שתישלח לה</label><textarea id="f-msg" placeholder="לדוגמה: שלומית, רציתי רק להגיד שאני אוהב אותך 💙"></textarea></div>
+        <div class="field"><label class="fl">כותרת פנימית</label><input type="text" id="f-title" placeholder="לדוגמה: תזכורת בוקר" /></div>
+        <div class="field"><label class="fl">הודעת WhatsApp</label><textarea id="f-msg" placeholder="מה לכתוב לה?"></textarea></div>
         <div class="preview-box">
           <div class="wa-icon">💬</div>
-          <div><div class="preview-name">אתה</div><div class="preview-msg" id="prevMsg" style="color:var(--text3);">כתוב הודעה לתצוגה מקדימה...</div><div class="preview-time" id="prevTime"></div></div>
+          <div><div class="preview-name">בוט אוטומטי</div><div class="preview-msg" id="prevMsg" style="color:var(--text3);">התצוגה המקדימה תופיע כאן...</div><div class="preview-time" id="prevTime"></div></div>
         </div>
       </div>
       <div class="card">
@@ -204,16 +186,16 @@ input[type=time]:focus{border-color:var(--green);}
       <div class="card">
         <div class="ct">חזרות</div>
         <div class="toggle-row">
-          <div><div class="tl">חזרה ללא הגבלה</div><div class="ts">עד שתמחק את התזכורת</div></div>
+          <div><div class="tl">חזרה ללא הגבלה</div><div class="ts">הבוט ישלח בכל פעם מחדש</div></div>
           <label class="switch"><input type="checkbox" id="f-inf" checked onchange="onInf()"><span class="sw"></span></label>
         </div>
         <div class="repeat-extra" id="repeatExtra">
-          <div class="field" style="margin-top:12px"><label class="fl">כמה פעמים?</label>
+          <div class="field" style="margin-top:12px"><label class="fl">כמה פעמים סך הכל?</label>
             <div class="inline-row"><input type="number" id="f-count" min="1" max="999" value="7" /><span>פעמים</span></div>
           </div>
         </div>
       </div>
-      <button class="btn-primary" onclick="addReminder()"><span>💚</span>הוסף תזכורת</button>
+      <button class="btn-primary" onclick="addReminder()"><span>🤖</span>שמור תזכורת אוטומטית</button>
     </div>
 
     <div class="page" id="page-list">
@@ -222,11 +204,11 @@ input[type=time]:focus{border-color:var(--green);}
     </div>
 
     <div class="page" id="page-stats">
-      <div class="ph"><div class="ph-title">סטטיסטיקות</div><div class="ph-sub">כמה אהבה שלחת</div></div>
+      <div class="ph"><div class="ph-title">סטטיסטיקות</div><div class="ph-sub">מעקב אחרי הבוט</div></div>
       <div class="stats-grid">
         <div class="stat"><div class="stat-n g" id="s1">0</div><div class="stat-l">תזכורות פעילות</div></div>
-        <div class="stat"><div class="stat-n" id="s2">0</div><div class="stat-l">הודעות נשלחו</div></div>
-        <div class="stat"><div class="stat-n" id="s3">—</div><div class="stat-l">הבאה בעוד (שע׳)</div></div>
+        <div class="stat"><div class="stat-n" id="s2">0</div><div class="stat-l">נשלחו סה"כ</div></div>
+        <div class="stat"><div class="stat-n" id="s3">—</div><div class="stat-l">הבאה (שע׳)</div></div>
       </div>
       <div class="card" id="statsDetail"></div>
     </div>
@@ -236,12 +218,15 @@ input[type=time]:focus{border-color:var(--green);}
 <div id="toast"></div>
 
 <script>
-let data=JSON.parse(localStorage.getItem('warem4')||'{"reminders":[],"phone":"","name":""}');
+// כתובת שרת הבוט (Node.js) שלך
+const SERVER_URL = "http://localhost:3000"; 
+
+let data=JSON.parse(localStorage.getItem('warem_auto')||'{"reminders":[],"phone":"","name":""}');
 let times=['08:00'];
 let selDays=[0,1,2,3,4];
 let alarms={};
-let pendingFire=null;
-function save(){localStorage.setItem('warem4',JSON.stringify(data));}
+
+function save(){localStorage.setItem('warem_auto',JSON.stringify(data));}
 
 function init(){
   if(!data.phone)document.getElementById('setupModal').classList.add('show');
@@ -257,16 +242,18 @@ function saveSetup(){
   data.phone=p.replace(/\D/g,'');
   data.name=n||'אהובה';
   save();document.getElementById('setupModal').classList.remove('show');
-  updatePhoneDisplay();toast('הוגדר! 💚','ok');
+  updatePhoneDisplay();toast('הוגדר בהצלחה!','ok');
 }
+
 function openSetup(){
-  document.getElementById('setup-phone').value=data.phone?'+'+data.phone:'';
+  document.getElementById('setup-phone').value=data.phone;
   document.getElementById('setup-name').value=data.name||'';
   document.getElementById('setupModal').classList.add('show');
 }
+
 function updatePhoneDisplay(){
   document.getElementById('phoneValDisplay').textContent=
-    data.name?(data.name+(data.phone?' (+'+data.phone+')':'')):(data.phone?'+'+data.phone:'—');
+    data.name?(data.name+(data.phone?' ('+data.phone+')':'')):(data.phone?data.phone:'—');
 }
 
 function goto(p){
@@ -296,33 +283,65 @@ function renderTimes(){
     w.appendChild(row);
   });
 }
+
 function addTime(){
   const last=times[times.length-1]||'08:00';const[h,m]=last.split(':').map(Number);
   times.push(`${String((h+1)%24).padStart(2,'0')}:${String(m).padStart(2,'0')}`);renderTimes();
 }
+
 function onInf(){document.getElementById('repeatExtra').classList.toggle('show',!document.getElementById('f-inf').checked);}
 
 function updatePreview(){
   const msg=document.getElementById('f-msg').value;
   const el=document.getElementById('prevMsg');
   el.style.color=msg?'var(--text)':'var(--text3)';
-  el.textContent=msg||'כתוב הודעה לתצוגה מקדימה...';
+  el.textContent=msg||'התצוגה המקדימה תופיע כאן...';
   document.getElementById('prevTime').textContent=new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
 }
 
 function addReminder(){
   const title=document.getElementById('f-title').value.trim();
   const msg=document.getElementById('f-msg').value.trim();
-  if(!title){toast('נא להזין כותרת','err');return;}
-  if(!msg){toast('נא להזין הודעת WhatsApp','err');return;}
+  if(!title||!msg){toast('מלא את כל השדות','err');return;}
   if(!data.phone){openSetup();return;}
   const r={id:Date.now(),title,msg,times:[...times].sort(),days:[...selDays].sort(),
     infinite:document.getElementById('f-inf').checked,
     repeatCount:parseInt(document.getElementById('f-count').value)||7,
-    fired:0,active:true,created:Date.now()};
+    fired:0,active:true};
   data.reminders.push(r);save();scheduleReminder(r);updateBadge();
-  toast('תזכורת נוספה! 💚','ok');
+  toast('תזכורת אוטומטית נשמרה','ok');
   document.getElementById('f-title').value='';document.getElementById('f-msg').value='';updatePreview();
+}
+
+// פונקציית השליחה האוטומטית לשרת
+async function fireFire(id){
+  const idx=data.reminders.findIndex(r=>r.id===id);if(idx===-1)return;
+  const r=data.reminders[idx];
+  if(!r.active)return;
+
+  try {
+    const response = await fetch(`${SERVER_URL}/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ number: data.phone, message: r.msg })
+    });
+    
+    if(response.ok) {
+      toast('🤖 הבוט שלח הודעה: ' + r.title, 'ok');
+      r.fired++;
+      if(!r.infinite && r.fired >= r.repeatCount) r.active = false;
+      data.reminders[idx] = r;
+      save();
+      updateBadge();
+    } else {
+      toast('שגיאת שרת בשליחה', 'err');
+    }
+  } catch (e) {
+    console.error(e);
+    toast('השרת לא מגיב - וודא שהבוט רץ', 'err');
+  }
+
+  if(r.active) setTimeout(()=>scheduleReminder(r), 1000);
 }
 
 function msUntil(dayIdx,h,m){
@@ -346,100 +365,54 @@ function scheduleReminder(r){
     });
   });
 }
+
 function scheduleAll(){data.reminders.filter(r=>r.active).forEach(scheduleReminder);}
 function clearTimers(id){(alarms[id]||[]).forEach(clearTimeout);alarms[id]=[];}
-
-function fireFire(id){
-  const idx=data.reminders.findIndex(r=>r.id===id);if(idx===-1)return;
-  const r=data.reminders[idx];
-  if(!r.active)return;if(!r.infinite&&r.fired>=r.repeatCount)return;
-  showBanner(r);
-  r.fired++;if(!r.infinite&&r.fired>=r.repeatCount)r.active=false;
-  data.reminders[idx]=r;save();updateBadge();
-  if(r.active)setTimeout(()=>scheduleReminder(r),1000);
-}
-
-function showBanner(r){
-  pendingFire=r;
-  document.getElementById('fireTitle').textContent=r.title;
-  document.getElementById('fireMsg').textContent=r.msg.length>70?r.msg.slice(0,70)+'…':r.msg;
-  document.getElementById('fireBanner').classList.add('show');
-}
-function openWA(){
-  if(!pendingFire||!data.phone)return;
-  const phone=data.phone.replace(/\D/g,'');
-  window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(pendingFire.msg),'_blank');
-  dismissBanner();
-}
-function dismissBanner(){document.getElementById('fireBanner').classList.remove('show');pendingFire=null;}
 
 const DN=['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
 function daysStr(days){
   if(days.length===7)return 'כל יום';
-  if(days.length===5&&[0,1,2,3,4].every(d=>days.includes(d)))return 'ימי עבודה';
   return days.map(d=>DN[d]).join(' ');
 }
 
 function renderList(){
   const el=document.getElementById('rList');
-  const active=data.reminders.filter(r=>r.active);
-  const done=data.reminders.filter(r=>!r.active);
-  document.getElementById('list-sub').textContent=`${active.length} פעילות · ${done.length} הסתיימו`;
-  if(!data.reminders.length){el.innerHTML='<div class="empty"><div class="empty-icon">💚</div>עדיין אין תזכורות<br>צור תזכורת ראשונה</div>';return;}
-  el.innerHTML=[...active,...done].map(r=>{
-    const pct=r.infinite?100:Math.min(100,Math.round(r.fired/r.repeatCount*100));
-    return `<div class="r-card ${r.active?'':'paused'}">
-      <div class="r-avatar">${r.active?'💚':'✓'}</div>
+  if(!data.reminders.length){el.innerHTML='<div class="empty">אין תזכורות עדיין</div>';return;}
+  el.innerHTML=data.reminders.map(r=>`
+    <div class="r-card ${r.active?'':'paused'}">
+      <div class="r-avatar">🤖</div>
       <div class="r-body">
         <div class="r-title">${esc(r.title)}</div>
         <div class="r-text">${esc(r.msg)}</div>
         <div class="tags">
           <span class="tag">${r.times.join(', ')}</span>
           <span class="tag">${daysStr(r.days)}</span>
-          ${r.infinite?'<span class="tag g">∞ ללא הגבלה</span>':`<span class="tag ${r.active?'':'w'}">${r.fired}/${r.repeatCount}</span>`}
-          ${!r.active?'<span class="tag w">הסתיים</span>':''}
+          <span class="tag">${r.fired} פעמים נשלחו</span>
         </div>
-        ${!r.infinite?`<div class="prog"><div class="prog-fill" style="width:${pct}%"></div></div>`:''}
       </div>
       <div class="r-actions">
-        <button class="act-btn send" title="שלח עכשיו" onclick="sendNow(${r.id})">↗</button>
-        <button class="act-btn" title="${r.active?'השהה':'הפעל'}" onclick="toggleR(${r.id})">${r.active?'⏸':'▶'}</button>
-        <button class="act-btn del" title="מחק" onclick="delR(${r.id})">✕</button>
+        <button class="act-btn send" onclick="fireFire(${r.id})">⚡</button>
+        <button class="act-btn" onclick="toggleR(${r.id})">${r.active?'⏸':'▶'}</button>
+        <button class="act-btn del" onclick="delR(${r.id})">✕</button>
       </div>
-    </div>`;
-  }).join('');
+    </div>`).join('');
 }
 
-function sendNow(id){
-  const r=data.reminders.find(x=>x.id===id);if(!r)return;
-  window.open('https://wa.me/'+data.phone.replace(/\D/g,'')+'?text='+encodeURIComponent(r.msg),'_blank');
-}
 function toggleR(id){
   const r=data.reminders.find(x=>x.id===id);if(!r)return;
   r.active=!r.active;
   if(r.active)scheduleReminder(r);else clearTimers(id);
-  save();renderList();updateBadge();toast(r.active?'תזכורת הופעלה':'תזכורת הושהתה');
+  save();renderList();updateBadge();
 }
+
 function delR(id){
   clearTimers(id);data.reminders=data.reminders.filter(r=>r.id!==id);
-  save();renderList();updateBadge();toast('נמחק');
+  save();renderList();updateBadge();
 }
 
 function renderStats(){
-  const active=data.reminders.filter(r=>r.active).length;
-  const fired=data.reminders.reduce((a,r)=>a+r.fired,0);
-  document.getElementById('s1').textContent=active;
-  document.getElementById('s2').textContent=fired;
-  let nearest=null;const now=new Date();
-  data.reminders.filter(r=>r.active).forEach(r=>{r.times.forEach(t=>{const[h,m]=t.split(':').map(Number);r.days.forEach(d=>{const ms=msUntil(d,h,m);if(ms&&(!nearest||ms<nearest))nearest=ms;});});});
-  document.getElementById('s3').textContent=nearest?(nearest/3600000).toFixed(1):'—';
-  const det=document.getElementById('statsDetail');
-  if(!data.reminders.length){det.innerHTML='<div style="color:var(--text3);font-size:14px;text-align:center;padding:2rem;">אין נתונים עדיין</div>';return;}
-  det.innerHTML='<div class="ct" style="margin-bottom:12px">פירוט</div>'+
-    data.reminders.map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
-      <div><div style="font-size:14px;font-weight:500">${esc(r.title)}</div><div style="font-size:12px;color:var(--text3);margin-top:2px">${r.times.join(', ')} · ${daysStr(r.days)}</div></div>
-      <div style="text-align:left"><div style="font-family:var(--mono);font-size:13px;color:${r.active?'var(--green)':'var(--text3)'}">${r.fired}${r.infinite?'':'/'+r.repeatCount}</div><div style="font-size:11px;color:var(--text3)">${r.active?'פעיל':'הסתיים'}</div></div>
-    </div>`).join('');
+  document.getElementById('s1').textContent=data.reminders.filter(r=>r.active).length;
+  document.getElementById('s2').textContent=data.reminders.reduce((a,r)=>a+r.fired,0);
 }
 
 function updateBadge(){
