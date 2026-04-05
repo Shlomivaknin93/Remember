@@ -1,30 +1,24 @@
-# שימוש בתמונה רשמית של Node (גרסה קלה)
 FROM node:18-slim
 
-# התקנת התלויות המינימליות שהדפדפן (Puppeteer) צריך כדי לרוץ בלינוקס
+# התקנת ספריות מערכת בלבד (זה רץ מהר מאוד)
 RUN apt-get update && apt-get install -y \
-    wget \
-    gnupg \
-    ca-certificates \
-    procps \
-    libxss1 \
+    chromium \
+    fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
     --no-install-recommends \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
-# הגדרת תיקיית עבודה
 WORKDIR /app
 
-# העתקת קבצי החבילות בלבד קודם (בשביל Cache מהיר)
-COPY package*.json ./
+# הגדרה שמונעת מ-npm להוריד כרום בעצמו
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
-# התקנה מהירה של הספריות
+COPY package*.json ./
+# התקנה ללא הורדת דפדפן - זה אמור לקחת פחות מ-2 דקות
 RUN npm install --production
 
-# העתקת שאר הקבצים
 COPY . .
 
-# הגדרת הפורט
 EXPOSE 3000
 
-# הרצה
 CMD ["node", "index.js"]
