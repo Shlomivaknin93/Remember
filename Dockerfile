@@ -1,20 +1,14 @@
-FROM node:18-slim
-
-# התקנת דפדפן קל ישירות למערכת
-RUN apt-get update && apt-get install -y \
-    chromium \
-    libxss1 \
-    --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
+FROM ghcr.io/puppeteer/puppeteer:22.13.1
 
 WORKDIR /app
 
-# הגדרת Puppeteer להשתמש בדפדפן שהתקנו
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+# ודא ש-puppeteer לא מנסה להוריד כרום מחדש, ומשתמש בבינארי שמגיע עם התמונה
+ENV NODE_ENV=production \
+    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 COPY package*.json ./
-RUN npm install --production
+RUN npm ci --omit=dev
 COPY . .
 
 EXPOSE 3000
