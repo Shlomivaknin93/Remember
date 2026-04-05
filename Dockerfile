@@ -1,27 +1,30 @@
-# משתמשים בתמונה שכוללת כבר את כל התלויות של Puppeteer (הדפדפן)
-FROM ghcr.io/puppeteer/puppeteer:latest
+# שימוש בתמונה רשמית של Node (גרסה קלה)
+FROM node:18-slim
 
-# מעבר למשתמש root כדי להתקין דברים אם צריך
-USER root
+# התקנת התלויות המינימליות שהדפדפן (Puppeteer) צריך כדי לרוץ בלינוקס
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    ca-certificates \
+    procps \
+    libxss1 \
+    --no-install-recommends \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# הגדרת תיקיית העבודה
+# הגדרת תיקיית עבודה
 WORKDIR /app
 
-# העתקת קבצי ההגדרות
+# העתקת קבצי החבילות בלבד קודם (בשביל Cache מהיר)
 COPY package*.json ./
 
-# התקנת הספריות (כולל whatsapp-web.js ו-cors)
-RUN npm install
+# התקנה מהירה של הספריות
+RUN npm install --production
 
-# העתקת כל שאר הקבצים (כולל index.js)
+# העתקת שאר הקבצים
 COPY . .
 
-# הגדרת משתנה סביבה שהדפדפן ידע איפה הוא רץ
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
-
-# חשיפת הפורט (Railway יזריק את הפורט שלו לפה)
+# הגדרת הפורט
 EXPOSE 3000
 
-# הפקודה להרצת השרת שלך
+# הרצה
 CMD ["node", "index.js"]
