@@ -20,7 +20,7 @@ let isReady = false;
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
-        executablePath: '/usr/bin/chromium', // קריטי! אומר לבוט איפה הדפדפן נמצא
+        executablePath: '/usr/bin/chromium',
         headless: true,
         args: [
             '--no-sandbox',
