@@ -20,7 +20,7 @@ let isReady = false;
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
-        executablePath: '/usr/bin/chromium',
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_PATH || '/usr/bin/chromium',
         headless: true,
         args: [
             '--no-sandbox',

@@ -8,7 +8,8 @@ ENV NODE_ENV=production \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 COPY package*.json ./
-RUN npm ci --omit=dev
+# אין lockfile בריפו, נשתמש ב-npm install במקום ci
+RUN npm install --omit=dev
 COPY . .
 
 EXPOSE 3000
