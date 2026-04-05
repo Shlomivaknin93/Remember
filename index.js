@@ -20,16 +20,13 @@ let isReady = false;
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
-        executablePath: '/usr/bin/chromium', // הנתיב לדפדפן שהתקנו ב-Dockerfile
+        executablePath: '/usr/bin/chromium', // קריטי! אומר לבוט איפה הדפדפן נמצא
         headless: true,
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
-            '--no-first-run',
-            '--no-zygote',
-            '--single-process',
-            '--disable-gpu'
+            '--single-process'
         ],
     }
 });
