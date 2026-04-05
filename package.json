@@ -2,6 +2,9 @@
   "name": "remember-bot",
   "version": "1.0.0",
   "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
     "whatsapp-web.js": "^1.23.0",
     "qrcode": "^1.5.3",
