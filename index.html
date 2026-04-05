@@ -114,12 +114,21 @@ input[type=time]:focus{border-color:var(--green);}
 #toast.show{transform:translateX(-50%) translateY(0);}
 #toast.ok{border-color:var(--green);color:var(--green);}
 #toast.err{border-color:var(--danger);color:var(--danger);}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+
+/* מודאלים */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity 0.3s;}
 .modal-bg.show{opacity:1;pointer-events:all;}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:2rem;width:90%;max-width:380px;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:2rem;width:90%;max-width:380px;text-align:center;}
 .modal-title{font-size:18px;font-weight:700;margin-bottom:6px;}
 .modal-sub{font-size:13px;color:var(--text2);margin-bottom:1.5rem;}
 .modal-btn{width:100%;padding:11px;background:var(--green);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;font-family:var(--sans);margin-top:10px;}
+
+/* עיצוב ה-QR */
+#qr-image { background: white; padding: 10px; border-radius: 10px; width: 220px; height: 220px; margin: 15px auto; display: block; }
+.status-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text3); margin-top: 10px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--danger); }
+.dot.online { background: var(--green); box-shadow: 0 0 8px var(--green); }
+
 @media(max-width:680px){
   .sidebar{width:100%;height:54px;bottom:auto;flex-direction:row;align-items:center;border-left:none;border-bottom:1px solid var(--border);}
   .logo-area{display:none;}.nav{display:flex;flex-direction:row;padding:0.4rem 0.5rem;overflow-x:auto;}
@@ -140,6 +149,16 @@ input[type=time]:focus{border-color:var(--green);}
   </div>
 </div>
 
+<div class="modal-bg" id="qrModal">
+  <div class="modal">
+    <div class="modal-title">🔓 חיבור לוואטסאפ</div>
+    <div class="modal-sub">סרוק את הברקוד מהטלפון כדי להפעיל את הבוט</div>
+    <img id="qr-image" src="" alt="ממתין לברקוד...">
+    <div class="status-indicator"><div class="dot" id="statusDot"></div> <span id="statusText">ממתין לשרת...</span></div>
+    <button class="modal-btn" style="background:var(--bg3); color:var(--text2)" onclick="closeQR()">סגור</button>
+  </div>
+</div>
+
 <div class="shell">
   <aside class="sidebar">
     <div class="logo-area">
@@ -147,11 +166,15 @@ input[type=time]:focus{border-color:var(--green);}
         <div class="logo-pill">💚</div>
         <div><div class="logo-title">תזכורות לאהבה</div><div class="logo-sub">Fully Automated</div></div>
       </div>
+      <div class="status-indicator"><div class="dot" id="sideStatusDot"></div> <span id="sideStatusText">מנתק</span></div>
     </div>
     <nav class="nav">
       <button class="nav-item on" id="nav-add" onclick="goto('add')"><span class="nav-icon">✏️</span>תזכורת חדשה</button>
       <button class="nav-item" id="nav-list" onclick="goto('list')"><span class="nav-icon">📋</span>רשימה<span class="nav-badge" id="nav-badge">0</span></button>
       <button class="nav-item" id="nav-stats" onclick="goto('stats')"><span class="nav-icon">📊</span>סטטיסטיקות</button>
+      <button class="nav-item" style="margin-top: 10px; border-top: 1px solid var(--border); padding-top: 15px;" onclick="openQR()">
+        <span class="nav-icon">📱</span>חיבור וואטסאפ
+      </button>
     </nav>
     <div class="sidebar-bottom">
       <div class="phone-display">
@@ -208,9 +231,8 @@ input[type=time]:focus{border-color:var(--green);}
       <div class="stats-grid">
         <div class="stat"><div class="stat-n g" id="s1">0</div><div class="stat-l">תזכורות פעילות</div></div>
         <div class="stat"><div class="stat-n" id="s2">0</div><div class="stat-l">נשלחו סה"כ</div></div>
-        <div class="stat"><div class="stat-n" id="s3">—</div><div class="stat-l">הבאה (שע׳)</div></div>
+        <div class="stat"><div class="stat-n" id="s3">—</div><div class="stat-l">סטטוס בוט</div></div>
       </div>
-      <div class="card" id="statsDetail"></div>
     </div>
   </main>
 </div>
@@ -218,23 +240,59 @@ input[type=time]:focus{border-color:var(--green);}
 <div id="toast"></div>
 
 <script>
-// כתובת שרת הבוט (Node.js) שלך
-const SERVER_URL = "http://localhost:3000"; 
+// !!! עדכן כאן את הכתובת שקיבלת מ-RAILWAY !!!
+const SERVER_URL = "https://your-bot-name.up.railway.app"; 
 
 let data=JSON.parse(localStorage.getItem('warem_auto')||'{"reminders":[],"phone":"","name":""}');
 let times=['08:00'];
 let selDays=[0,1,2,3,4];
 let alarms={};
+let isBotOnline = false;
 
 function save(){localStorage.setItem('warem_auto',JSON.stringify(data));}
+
+async function checkStatus() {
+    try {
+        const res = await fetch(`${SERVER_URL}/status`);
+        const status = await res.json();
+        
+        isBotOnline = status.connected;
+        const dot = document.getElementById('statusDot');
+        const sideDot = document.getElementById('sideStatusDot');
+        const text = document.getElementById('statusText');
+        const sideText = document.getElementById('sideStatusText');
+
+        if (status.connected) {
+            [dot, sideDot].forEach(d => d.classList.add('online'));
+            text.textContent = "מחובר ומבצע פקודות ✅";
+            sideText.textContent = "מחובר";
+            if(document.getElementById('qrModal').classList.contains('show')) closeQR();
+        } else if (status.qr) {
+            [dot, sideDot].forEach(d => d.classList.remove('online'));
+            document.getElementById('qr-image').src = status.qr;
+            text.textContent = "סרוק כדי להתחבר";
+            sideText.textContent = "ממתין לסריקה";
+            // פתיחה אוטומטית אם לא מחובר
+            if(!document.getElementById('qrModal').classList.contains('show')) openQR();
+        }
+    } catch (e) {
+        console.log("Server checking...");
+    }
+}
+
+function openQR() { document.getElementById('qrModal').classList.add('show'); }
+function closeQR() { document.getElementById('qrModal').classList.remove('show'); }
 
 function init(){
   if(!data.phone)document.getElementById('setupModal').classList.add('show');
   updatePhoneDisplay();renderTimes();updateBadge();scheduleAll();
   document.getElementById('f-msg').addEventListener('input',updatePreview);
   updatePreview();
+  setInterval(checkStatus, 5000); // בדיקה כל 5 שניות
+  checkStatus();
 }
 
+// פונקציות הניהול נשארות זהות
 function saveSetup(){
   const p=document.getElementById('setup-phone').value.trim();
   const n=document.getElementById('setup-name').value.trim();
@@ -313,11 +371,10 @@ function addReminder(){
   document.getElementById('f-title').value='';document.getElementById('f-msg').value='';updatePreview();
 }
 
-// פונקציית השליחה האוטומטית לשרת
 async function fireFire(id){
   const idx=data.reminders.findIndex(r=>r.id===id);if(idx===-1)return;
   const r=data.reminders[idx];
-  if(!r.active)return;
+  if(!r.active || !isBotOnline) return;
 
   try {
     const response = await fetch(`${SERVER_URL}/send`, {
@@ -333,13 +390,8 @@ async function fireFire(id){
       data.reminders[idx] = r;
       save();
       updateBadge();
-    } else {
-      toast('שגיאת שרת בשליחה', 'err');
     }
-  } catch (e) {
-    console.error(e);
-    toast('השרת לא מגיב - וודא שהבוט רץ', 'err');
-  }
+  } catch (e) { toast('השרת לא מגיב', 'err'); }
 
   if(r.active) setTimeout(()=>scheduleReminder(r), 1000);
 }
@@ -355,7 +407,6 @@ function msUntil(dayIdx,h,m){
 function scheduleReminder(r){
   clearTimers(r.id);
   if(!r.active)return;
-  if(!r.infinite&&r.fired>=r.repeatCount)return;
   alarms[r.id]=[];
   r.times.forEach(t=>{
     const[h,m]=t.split(':').map(Number);
@@ -368,12 +419,6 @@ function scheduleReminder(r){
 
 function scheduleAll(){data.reminders.filter(r=>r.active).forEach(scheduleReminder);}
 function clearTimers(id){(alarms[id]||[]).forEach(clearTimeout);alarms[id]=[];}
-
-const DN=['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
-function daysStr(days){
-  if(days.length===7)return 'כל יום';
-  return days.map(d=>DN[d]).join(' ');
-}
 
 function renderList(){
   const el=document.getElementById('rList');
@@ -413,6 +458,7 @@ function delR(id){
 function renderStats(){
   document.getElementById('s1').textContent=data.reminders.filter(r=>r.active).length;
   document.getElementById('s2').textContent=data.reminders.reduce((a,r)=>a+r.fired,0);
+  document.getElementById('s3').textContent=isBotOnline ? "פעיל" : "מנותק";
 }
 
 function updateBadge(){
@@ -420,6 +466,8 @@ function updateBadge(){
   const el=document.getElementById('nav-badge');el.textContent=n;el.classList.toggle('show',n>0);
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function daysStr(days){ return days.length===7 ? 'כל יום' : days.map(d=>['א','ב','ג','ד','ה','ו','ש'][d]).join(' '); }
+
 let toastT;
 function toast(msg,type=''){
   const el=document.getElementById('toast');el.textContent=msg;
