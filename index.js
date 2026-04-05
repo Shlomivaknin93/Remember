@@ -63,9 +63,12 @@ client.on('disconnected', (reason) => {
     client.initialize(); // ניסיון להתחבר מחדש
 });
 
-// התחל את לקוח הוואטסאפ (הכרחי כדי לקבל QR)
-client.initialize().catch(err => {
-    console.error('Failed to initialize WhatsApp client:', err);
+// לוג שגיאות גלובלי כדי לא להפיל את התהליך בשקט
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
 });
 
 // דף בית ובריאות לשירות
@@ -98,4 +101,8 @@ app.post('/send', async (req, res) => {
 const port = process.env.PORT || 3000;
 app.listen(port, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${port}`);
+  // התחל את לקוח הוואטסאפ אחרי שהשרת קם, כדי שהבריאות תענה גם אם יש תקלה ב-Puppeteer
+  client.initialize().catch(err => {
+    console.error('Failed to initialize WhatsApp client:', err);
+  });
 });
