@@ -16,6 +16,7 @@ app.use(express.json());
 
 let qrImageData = ""; 
 let isReady = false;
+const SKIP_WA = (process.env.SKIP_WA || '').toLowerCase() === 'true' || process.env.SKIP_WA === '1';
 const resolvedChromePath = process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_PATH || '/usr/bin/chromium';
 console.log('Chromium executable path resolved to:', resolvedChromePath);
 
@@ -83,7 +84,8 @@ app.get('/healthz', (req, res) => res.send('ok'));
 app.get('/status', (req, res) => {
     res.json({ 
         connected: isReady, 
-        qr: qrImageData 
+        qr: qrImageData,
+        waDisabled: SKIP_WA
     });
 });
 
@@ -103,7 +105,11 @@ app.post('/send', async (req, res) => {
 const port = process.env.PORT || 3000;
 app.listen(port, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${port}`);
-  // התחל את לקוח הוואטסאפ אחרי שהשרת קם, כדי שהבריאות תענה גם אם יש תקלה ב-Puppeteer
+  // התחל את לקוח הוואטסאפ אחרי שהשרת קם, אלא אם ביקשו לדלג לצורך דיבאג
+  if (SKIP_WA) {
+    console.log('Skipping WhatsApp initialization (SKIP_WA is set).');
+    return;
+  }
   client.initialize().catch(err => {
     console.error('Failed to initialize WhatsApp client:', err);
   });
