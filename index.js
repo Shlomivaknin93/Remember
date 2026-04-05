@@ -1,4 +1,4 @@
-const { Client, LocalAuth } = require('whatsapp-web.js');
+let Client, LocalAuth; // נטען דינמית רק אם לא מדלגים על WA
 const express = require('express');
 const cors = require('cors');
 const qrcode = require('qrcode');
@@ -16,55 +16,69 @@ app.use(express.json());
 
 let qrImageData = ""; 
 let isReady = false;
+let client = null;
 const SKIP_WA = (process.env.SKIP_WA || '').toLowerCase() === 'true' || process.env.SKIP_WA === '1';
 const resolvedChromePath = process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_PATH || '/usr/bin/chromium';
 console.log('Chromium executable path resolved to:', resolvedChromePath);
 
-const client = new Client({
+function initWhatsApp() {
+  try {
+    ({ Client, LocalAuth } = require('whatsapp-web.js'));
+  } catch (e) {
+    console.error('Failed to require whatsapp-web.js:', e);
+    return;
+  }
+
+  client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
-        executablePath: resolvedChromePath,
-        headless: true,
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--single-process',
-            '--no-zygote',
-            '--disable-gpu'
-        ],
+      executablePath: resolvedChromePath,
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--single-process',
+        '--no-zygote',
+        '--disable-gpu'
+      ],
     }
-});
+  });
 
-client.on('qr', async (qr) => {
+  client.on('qr', async (qr) => {
     console.log('New QR Received');
     try {
-        qrImageData = await qrcode.toDataURL(qr);
+      qrImageData = await qrcode.toDataURL(qr);
     } catch (err) {
-        console.error('Error generating QR code:', err);
+      console.error('Error generating QR code:', err);
     }
-});
+  });
 
-client.on('ready', () => {
+  client.on('ready', () => {
     console.log('✅ WhatsApp Client is Ready!');
-    qrImageData = ""; 
+    qrImageData = "";
     isReady = true;
-});
+  });
 
-client.on('authenticated', () => {
+  client.on('authenticated', () => {
     console.log('👍 Authenticated');
     qrImageData = "";
-});
+  });
 
-client.on('auth_failure', msg => {
+  client.on('auth_failure', msg => {
     console.error('❌ AUTHENTICATION FAILURE', msg);
-});
+  });
 
-client.on('disconnected', (reason) => {
+  client.on('disconnected', (reason) => {
     console.log('Client was logged out', reason);
     isReady = false;
     client.initialize(); // ניסיון להתחבר מחדש
-});
+  });
+
+  client.initialize().catch(err => {
+    console.error('Failed to initialize WhatsApp client:', err);
+  });
+}
 
 // לוג שגיאות גלובלי כדי לא להפיל את התהליך בשקט
 process.on('unhandledRejection', (reason) => {
@@ -91,7 +105,7 @@ app.get('/status', (req, res) => {
 
 app.post('/send', async (req, res) => {
     const { number, message } = req.body;
-    if (!isReady) return res.status(500).json({ error: "הבוט לא מחובר" });
+    if (!isReady || !client) return res.status(500).json({ error: "הבוט לא מחובר" });
 
     try {
         const chatId = number.includes('@c.us') ? number : `${number}@c.us`;
@@ -110,7 +124,5 @@ app.listen(port, '0.0.0.0', () => {
     console.log('Skipping WhatsApp initialization (SKIP_WA is set).');
     return;
   }
-  client.initialize().catch(err => {
-    console.error('Failed to initialize WhatsApp client:', err);
-  });
+  initWhatsApp();
 });
