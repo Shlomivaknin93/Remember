@@ -1,20 +1,11 @@
 {
-  "name": "whatsapp-bot",
+  "name": "remember-bot",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
-  },
   "dependencies": {
     "whatsapp-web.js": "^1.23.0",
     "qrcode": "^1.5.3",
     "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "puppeteer": "^21.0.0"
+    "cors": "^2.8.5"
   }
-
-  "scripts": {
-  "start": "node index.js",
-  "postinstall": "cross-env PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true"
-}
 }
