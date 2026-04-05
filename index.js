@@ -1,13 +1,20 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const express = require('express');
 const cors = require('cors');
-const qrcode = require('qrcode'); // חבילה חדשה להפיכת ה-QR לתמונה
+const qrcode = require('qrcode');
 
 const app = express();
-app.use(express.json());
-app.use(cors());
 
-let qrImageData = ""; // משתנה שיחזיק את התמונה של הברקוד
+// הגדרת CORS פעם אחת בלבד בצורה נכונה
+app.use(cors({
+    origin: '*', 
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type']
+}));
+
+app.use(express.json());
+
+let qrImageData = ""; 
 let isReady = false;
 
 const client = new Client({
@@ -18,7 +25,6 @@ const client = new Client({
             '--no-sandbox',
             '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
             '--no-first-run',
             '--no-zygote',
             '--single-process',
@@ -27,21 +33,36 @@ const client = new Client({
     }
 });
 
-// כשנוצר QR, נהפוך אותו ל-Data URL (תמונה שאפשר להציג ב-HTML)
 client.on('qr', async (qr) => {
     console.log('New QR Received');
-    qrImageData = await qrcode.toDataURL(qr);
+    try {
+        qrImageData = await qrcode.toDataURL(qr);
+    } catch (err) {
+        console.error('Error generating QR code:', err);
+    }
 });
 
 client.on('ready', () => {
     console.log('✅ WhatsApp Client is Ready!');
-    qrImageData = ""; // מנקים את הברקוד
+    qrImageData = ""; 
     isReady = true;
 });
 
-client.on('authenticated', () => console.log('👍 Authenticated'));
+client.on('authenticated', () => {
+    console.log('👍 Authenticated');
+    qrImageData = "";
+});
 
-// נקודת קצה לבדיקת סטטוס וקבלת QR
+client.on('auth_failure', msg => {
+    console.error('❌ AUTHENTICATION FAILURE', msg);
+});
+
+client.on('disconnected', (reason) => {
+    console.log('Client was logged out', reason);
+    isReady = false;
+    client.initialize(); // ניסיון להתחבר מחדש
+});
+
 app.get('/status', (req, res) => {
     res.json({ 
         connected: isReady, 
@@ -49,7 +70,6 @@ app.get('/status', (req, res) => {
     });
 });
 
-// שליחת הודעה
 app.post('/send', async (req, res) => {
     const { number, message } = req.body;
     if (!isReady) return res.status(500).json({ error: "הבוט לא מחובר" });
@@ -66,5 +86,5 @@ app.post('/send', async (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
-    client.initialize();
+    client.initialize().catch(err => console.error('Initialization error:', err));
 });
