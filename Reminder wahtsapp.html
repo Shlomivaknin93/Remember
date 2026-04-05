@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>תזכורות לבת זוג 💚</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0c0e0f;--bg2:#141618;--bg3:#1c1f21;--bg4:#222527;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
+  --green:#25D366;--green2:#128C7E;--gdim:rgba(37,211,102,0.12);
+  --text:#eceef0;--text2:#7a8088;--text3:#454a50;
+  --danger:#e24b4a;--warn:#f0a500;
+  --r:10px;--rl:14px;--mono:'DM Mono',monospace;--sans:'Heebo',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);direction:rtl;overflow-x:hidden;}
+.shell{display:flex;min-height:100vh;}
+.sidebar{width:230px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;position:fixed;right:0;top:0;bottom:0;z-index:20;}
+.logo-area{padding:1.4rem 1.2rem 1.1rem;border-bottom:1px solid var(--border);}
+.logo-row{display:flex;align-items:center;gap:10px;}
+.logo-pill{background:var(--green);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.logo-title{font-size:15px;font-weight:700;line-height:1.2;}
+.logo-sub{font-size:11px;color:var(--text2);font-family:var(--mono);margin-top:1px;}
+.nav{flex:1;padding:0.8rem 0.75rem;}
+.nav-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 11px;border:none;background:none;color:var(--text2);font-size:13.5px;font-family:var(--sans);border-radius:9px;text-align:right;cursor:pointer;transition:all 0.15s;margin-bottom:2px;}
+.nav-item:hover{background:var(--bg3);color:var(--text);}
+.nav-item.on{background:var(--gdim);color:var(--green);}
+.nav-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
+.nav-badge{margin-right:auto;background:var(--gdim);color:var(--green);font-size:10px;font-family:var(--mono);padding:1px 6px;border-radius:20px;min-width:20px;text-align:center;display:none;}
+.nav-badge.show{display:block;}
+.sidebar-bottom{padding:1rem;border-top:1px solid var(--border);}
+.phone-display{background:var(--bg3);border-radius:var(--r);padding:10px 12px;}
+.phone-label{color:var(--text3);font-size:11px;margin-bottom:3px;}
+.phone-val{color:var(--green);font-family:var(--mono);font-size:13px;font-weight:500;}
+.phone-edit-btn{background:none;border:none;color:var(--text2);font-size:11px;cursor:pointer;font-family:var(--sans);text-decoration:underline;margin-top:4px;display:block;padding:0;}
+.main{margin-right:230px;flex:1;padding:2.2rem 2.5rem;max-width:760px;}
+.page{display:none;}
+.page.on{display:block;}
+.ph{margin-bottom:2rem;}
+.ph-title{font-size:22px;font-weight:900;letter-spacing:-0.4px;}
+.ph-sub{font-size:13px;color:var(--text2);margin-top:5px;}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:1.4rem;margin-bottom:1rem;}
+.ct{font-size:10.5px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;display:flex;align-items:center;gap:10px;margin-bottom:1.1rem;}
+.ct::after{content:'';flex:1;height:1px;background:var(--border);}
+.field{margin-bottom:1rem;}
+.field:last-child{margin-bottom:0;}
+.fl{display:block;font-size:13px;color:var(--text2);font-weight:500;margin-bottom:6px;}
+input[type=text],input[type=tel],input[type=number],textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-family:var(--sans);font-size:14px;padding:10px 13px;outline:none;transition:border-color 0.15s;}
+input[type=text]:focus,input[type=tel]:focus,input[type=number]:focus,textarea:focus{border-color:var(--green);}
+textarea{min-height:80px;resize:vertical;}
+input[type=number]{width:80px;}
+.days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.day-btn{border:1px solid var(--border2);background:var(--bg3);border-radius:8px;padding:8px 2px;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;text-align:center;transition:all 0.15s;font-family:var(--sans);}
+.day-btn.on{background:var(--gdim);border-color:var(--green);color:var(--green);}
+.time-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+input[type=time]{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:var(--mono);font-size:14px;padding:8px 11px;outline:none;transition:border-color 0.15s;width:130px;}
+input[type=time]:focus{border-color:var(--green);}
+.btn-rm{background:none;border:none;color:var(--text3);cursor:pointer;width:28px;height:28px;border-radius:7px;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.btn-rm:hover{color:var(--danger);background:rgba(226,75,74,0.1);}
+.btn-add-time{display:inline-flex;align-items:center;gap:6px;background:none;border:1px dashed var(--border2);border-radius:8px;color:var(--text2);font-size:13px;padding:7px 13px;cursor:pointer;font-family:var(--sans);transition:all 0.15s;}
+.btn-add-time:hover{border-color:var(--green);color:var(--green);}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);}
+.toggle-row:last-child{border-bottom:none;padding-bottom:0;}
+.tl{font-size:14px;color:var(--text);}
+.ts{font-size:12px;color:var(--text3);margin-top:2px;}
+.switch{position:relative;width:42px;height:24px;flex-shrink:0;}
+.switch input{opacity:0;width:0;height:0;}
+.sw{position:absolute;inset:0;background:var(--bg4);border:1px solid var(--border2);border-radius:24px;cursor:pointer;transition:all 0.2s;}
+.sw::before{content:'';position:absolute;width:16px;height:16px;right:3px;top:3px;background:var(--text3);border-radius:50%;transition:all 0.2s;}
+.switch input:checked+.sw{background:var(--gdim);border-color:var(--green);}
+.switch input:checked+.sw::before{transform:translateX(-18px);background:var(--green);}
+.repeat-extra{display:none;margin-top:12px;}
+.repeat-extra.show{display:block;}
+.inline-row{display:flex;align-items:center;gap:10px;}
+.inline-row span{font-size:14px;color:var(--text2);}
+.preview-box{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rl);padding:1rem 1.2rem;display:flex;align-items:flex-start;gap:12px;margin-bottom:0;margin-top:1rem;}
+.wa-icon{font-size:26px;flex-shrink:0;margin-top:2px;}
+.preview-name{font-size:12px;color:var(--green);font-weight:500;margin-bottom:4px;}
+.preview-msg{font-size:14px;color:var(--text);line-height:1.5;}
+.preview-time{font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--mono);}
+.btn-primary{width:100%;padding:13px;background:var(--green);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;font-family:var(--sans);transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.btn-primary:active{transform:translateY(0);}
+.r-list{display:flex;flex-direction:column;gap:10px;}
+.r-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:1.1rem 1.25rem;display:flex;align-items:flex-start;gap:14px;animation:pop 0.18s ease;}
+@keyframes pop{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.r-card.paused{opacity:0.5;}
+.r-avatar{width:42px;height:42px;border-radius:12px;background:var(--gdim);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.r-body{flex:1;min-width:0;}
+.r-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.r-text{font-size:13px;color:var(--text2);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tags{display:flex;flex-wrap:wrap;gap:5px;}
+.tag{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:2px 9px;font-size:11px;color:var(--text2);font-family:var(--mono);}
+.tag.g{background:var(--gdim);border-color:transparent;color:var(--green);}
+.tag.w{background:rgba(240,165,0,0.12);border-color:transparent;color:var(--warn);}
+.prog{height:3px;background:var(--bg4);border-radius:2px;margin-top:10px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--green);border-radius:2px;}
+.r-actions{display:flex;flex-direction:column;gap:4px;flex-shrink:0;}
+.act-btn{width:32px;height:32px;border:none;background:none;border-radius:7px;cursor:pointer;font-size:15px;color:var(--text2);transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
+.act-btn:hover{background:var(--bg3);color:var(--text);}
+.act-btn.del:hover{background:rgba(226,75,74,0.12);color:var(--danger);}
+.act-btn.send:hover{background:var(--gdim);color:var(--green);}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem;}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:1.2rem;}
+.stat-n{font-size:30px;font-weight:900;font-family:var(--mono);color:var(--text);}
+.stat-n.g{color:var(--green);}
+.stat-l{font-size:12px;color:var(--text3);margin-top:4px;}
+.empty{text-align:center;padding:4rem 2rem;color:var(--text3);font-size:14px;line-height:1.9;}
+.empty-icon{font-size:44px;margin-bottom:1rem;opacity:0.35;}
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:10px 22px;font-size:13px;color:var(--text);z-index:999;transition:transform 0.25s;pointer-events:none;white-space:nowrap;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+#toast.ok{border-color:var(--green);color:var(--green);}
+#toast.err{border-color:var(--danger);color:var(--danger);}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+.modal-bg.show{opacity:1;pointer-events:all;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:2rem;width:90%;max-width:380px;}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:6px;}
+.modal-sub{font-size:13px;color:var(--text2);margin-bottom:1.5rem;}
+.modal-btn{width:100%;padding:11px;background:var(--green);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;font-family:var(--sans);margin-top:10px;}
+.fire-banner{position:fixed;top:1.2rem;left:50%;transform:translateX(-50%) translateY(-150px);background:var(--bg2);border:1.5px solid var(--green);border-radius:var(--rl);padding:1rem 1.4rem;z-index:200;transition:transform 0.3s ease;display:flex;align-items:center;gap:14px;min-width:340px;max-width:90vw;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
+.fire-banner.show{transform:translateX(-50%) translateY(0);}
+.fire-info{flex:1;}
+.fire-title{font-size:14px;font-weight:700;color:var(--text);}
+.fire-msg{font-size:12px;color:var(--text2);margin-top:2px;}
+.fire-send{background:var(--green);color:#fff;border:none;border-radius:9px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans);display:flex;align-items:center;gap:6px;flex-shrink:0;white-space:nowrap;}
+.fire-dismiss{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px;border-radius:6px;}
+.fire-dismiss:hover{color:var(--text);}
+@media(max-width:680px){
+  .sidebar{width:100%;height:54px;bottom:auto;flex-direction:row;align-items:center;border-left:none;border-bottom:1px solid var(--border);}
+  .logo-area{display:none;}.nav{display:flex;flex-direction:row;padding:0.4rem 0.5rem;overflow-x:auto;}
+  .sidebar-bottom{display:none;}.main{margin-right:0;margin-top:54px;padding:1.3rem 1rem;}
+  .stats-grid{grid-template-columns:1fr 1fr;}.fire-banner{min-width:280px;}
+}
+</style>
+</head>
+<body>
+
+<div class="modal-bg" id="setupModal">
+  <div class="modal">
+    <div class="modal-title">📱 הגדרה ראשונה</div>
+    <div class="modal-sub">מה מספר הוואטסאפ של בת הזוג שלך?</div>
+    <div class="field"><label class="fl">מספר טלפון (עם קידומת, לדוגמה: +972501234567)</label><input type="tel" id="setup-phone" placeholder="+972..." /></div>
+    <div class="field"><label class="fl">שמה (אופציונלי)</label><input type="text" id="setup-name" placeholder="לדוגמה: נועה" /></div>
+    <button class="modal-btn" onclick="saveSetup()">שמור והתחל ←</button>
+  </div>
+</div>
+
+<div class="fire-banner" id="fireBanner">
+  <div style="font-size:24px;flex-shrink:0;">💚</div>
+  <div class="fire-info">
+    <div class="fire-title" id="fireTitle"></div>
+    <div class="fire-msg" id="fireMsg"></div>
+  </div>
+  <button class="fire-send" onclick="openWA()">שלח ב-WhatsApp ↗</button>
+  <button class="fire-dismiss" onclick="dismissBanner()">✕</button>
+</div>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="logo-area">
+      <div class="logo-row">
+        <div class="logo-pill">💚</div>
+        <div><div class="logo-title">תזכורות לאהבה</div><div class="logo-sub">WhatsApp reminders</div></div>
+      </div>
+    </div>
+    <nav class="nav">
+      <button class="nav-item on" id="nav-add" onclick="goto('add')"><span class="nav-icon">✏️</span>תזכורת חדשה</button>
+      <button class="nav-item" id="nav-list" onclick="goto('list')"><span class="nav-icon">📋</span>רשימה<span class="nav-badge" id="nav-badge">0</span></button>
+      <button class="nav-item" id="nav-stats" onclick="goto('stats')"><span class="nav-icon">📊</span>סטטיסטיקות</button>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="phone-display">
+        <div class="phone-label">שולחים ל:</div>
+        <div class="phone-val" id="phoneValDisplay">—</div>
+        <button class="phone-edit-btn" onclick="openSetup()">שנה מספר</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page on" id="page-add">
+      <div class="ph"><div class="ph-title">תזכורת חדשה</div><div class="ph-sub">תתזמן הודעה שתישלח לוואטסאפ שלה</div></div>
+      <div class="card">
+        <div class="ct">תוכן ההודעה</div>
+        <div class="field"><label class="fl">כותרת (פנימית בלבד — לא נשלחת)</label><input type="text" id="f-title" placeholder="לדוגמה: תזכורת בוקר, חשבתי עלייך..." /></div>
+        <div class="field"><label class="fl">הודעת WhatsApp שתישלח לה</label><textarea id="f-msg" placeholder="לדוגמה: שלומית, רציתי רק להגיד שאני אוהב אותך 💙"></textarea></div>
+        <div class="preview-box">
+          <div class="wa-icon">💬</div>
+          <div><div class="preview-name">אתה</div><div class="preview-msg" id="prevMsg" style="color:var(--text3);">כתוב הודעה לתצוגה מקדימה...</div><div class="preview-time" id="prevTime"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ct">לוח זמנים</div>
+        <div class="field"><label class="fl">ימים בשבוע</label>
+          <div class="days-grid" id="daysGrid">
+            <div class="day-btn on" data-d="0">א׳</div><div class="day-btn on" data-d="1">ב׳</div><div class="day-btn on" data-d="2">ג׳</div><div class="day-btn on" data-d="3">ד׳</div><div class="day-btn on" data-d="4">ה׳</div><div class="day-btn" data-d="5">ו׳</div><div class="day-btn" data-d="6">ש׳</div>
+          </div>
+        </div>
+        <div class="field"><label class="fl">שעות שליחה</label><div id="timesWrap"></div><button class="btn-add-time" onclick="addTime()">＋ הוסף שעה</button></div>
+      </div>
+      <div class="card">
+        <div class="ct">חזרות</div>
+        <div class="toggle-row">
+          <div><div class="tl">חזרה ללא הגבלה</div><div class="ts">עד שתמחק את התזכורת</div></div>
+          <label class="switch"><input type="checkbox" id="f-inf" checked onchange="onInf()"><span class="sw"></span></label>
+        </div>
+        <div class="repeat-extra" id="repeatExtra">
+          <div class="field" style="margin-top:12px"><label class="fl">כמה פעמים?</label>
+            <div class="inline-row"><input type="number" id="f-count" min="1" max="999" value="7" /><span>פעמים</span></div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="addReminder()"><span>💚</span>הוסף תזכורת</button>
+    </div>
+
+    <div class="page" id="page-list">
+      <div class="ph"><div class="ph-title">התזכורות שלי</div><div class="ph-sub" id="list-sub"></div></div>
+      <div class="r-list" id="rList"></div>
+    </div>
+
+    <div class="page" id="page-stats">
+      <div class="ph"><div class="ph-title">סטטיסטיקות</div><div class="ph-sub">כמה אהבה שלחת</div></div>
+      <div class="stats-grid">
+        <div class="stat"><div class="stat-n g" id="s1">0</div><div class="stat-l">תזכורות פעילות</div></div>
+        <div class="stat"><div class="stat-n" id="s2">0</div><div class="stat-l">הודעות נשלחו</div></div>
+        <div class="stat"><div class="stat-n" id="s3">—</div><div class="stat-l">הבאה בעוד (שע׳)</div></div>
+      </div>
+      <div class="card" id="statsDetail"></div>
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+let data=JSON.parse(localStorage.getItem('warem4')||'{"reminders":[],"phone":"","name":""}');
+let times=['08:00'];
+let selDays=[0,1,2,3,4];
+let alarms={};
+let pendingFire=null;
+function save(){localStorage.setItem('warem4',JSON.stringify(data));}
+
+function init(){
+  if(!data.phone)document.getElementById('setupModal').classList.add('show');
+  updatePhoneDisplay();renderTimes();updateBadge();scheduleAll();
+  document.getElementById('f-msg').addEventListener('input',updatePreview);
+  updatePreview();
+}
+
+function saveSetup(){
+  const p=document.getElementById('setup-phone').value.trim();
+  const n=document.getElementById('setup-name').value.trim();
+  if(!p){toast('נא להזין מספר','err');return;}
+  data.phone=p.replace(/\D/g,'');
+  data.name=n||'אהובה';
+  save();document.getElementById('setupModal').classList.remove('show');
+  updatePhoneDisplay();toast('הוגדר! 💚','ok');
+}
+function openSetup(){
+  document.getElementById('setup-phone').value=data.phone?'+'+data.phone:'';
+  document.getElementById('setup-name').value=data.name||'';
+  document.getElementById('setupModal').classList.add('show');
+}
+function updatePhoneDisplay(){
+  document.getElementById('phoneValDisplay').textContent=
+    data.name?(data.name+(data.phone?' (+'+data.phone+')':'')):(data.phone?'+'+data.phone:'—');
+}
+
+function goto(p){
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('on'));
+  document.getElementById('page-'+p).classList.add('on');
+  document.getElementById('nav-'+p).classList.add('on');
+  if(p==='list')renderList();
+  if(p==='stats')renderStats();
+}
+
+document.querySelectorAll('.day-btn').forEach(b=>{
+  b.onclick=()=>{
+    const d=+b.dataset.d;
+    if(selDays.includes(d)){if(selDays.length===1)return;selDays=selDays.filter(x=>x!==d);b.classList.remove('on');}
+    else{selDays.push(d);b.classList.add('on');}
+  };
+});
+
+function renderTimes(){
+  const w=document.getElementById('timesWrap');w.innerHTML='';
+  times.forEach((t,i)=>{
+    const row=document.createElement('div');row.className='time-row';
+    const inp=document.createElement('input');inp.type='time';inp.value=t;
+    inp.oninput=()=>times[i]=inp.value;row.appendChild(inp);
+    if(times.length>1){const btn=document.createElement('button');btn.className='btn-rm';btn.innerHTML='✕';btn.onclick=()=>{times.splice(i,1);renderTimes();};row.appendChild(btn);}
+    w.appendChild(row);
+  });
+}
+function addTime(){
+  const last=times[times.length-1]||'08:00';const[h,m]=last.split(':').map(Number);
+  times.push(`${String((h+1)%24).padStart(2,'0')}:${String(m).padStart(2,'0')}`);renderTimes();
+}
+function onInf(){document.getElementById('repeatExtra').classList.toggle('show',!document.getElementById('f-inf').checked);}
+
+function updatePreview(){
+  const msg=document.getElementById('f-msg').value;
+  const el=document.getElementById('prevMsg');
+  el.style.color=msg?'var(--text)':'var(--text3)';
+  el.textContent=msg||'כתוב הודעה לתצוגה מקדימה...';
+  document.getElementById('prevTime').textContent=new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+}
+
+function addReminder(){
+  const title=document.getElementById('f-title').value.trim();
+  const msg=document.getElementById('f-msg').value.trim();
+  if(!title){toast('נא להזין כותרת','err');return;}
+  if(!msg){toast('נא להזין הודעת WhatsApp','err');return;}
+  if(!data.phone){openSetup();return;}
+  const r={id:Date.now(),title,msg,times:[...times].sort(),days:[...selDays].sort(),
+    infinite:document.getElementById('f-inf').checked,
+    repeatCount:parseInt(document.getElementById('f-count').value)||7,
+    fired:0,active:true,created:Date.now()};
+  data.reminders.push(r);save();scheduleReminder(r);updateBadge();
+  toast('תזכורת נוספה! 💚','ok');
+  document.getElementById('f-title').value='';document.getElementById('f-msg').value='';updatePreview();
+}
+
+function msUntil(dayIdx,h,m){
+  const now=new Date();
+  for(let i=0;i<8;i++){
+    const d=new Date(now);d.setDate(now.getDate()+i);d.setHours(h,m,0,0);
+    if(d.getDay()===dayIdx&&d>now)return d-now;
+  }return null;
+}
+
+function scheduleReminder(r){
+  clearTimers(r.id);
+  if(!r.active)return;
+  if(!r.infinite&&r.fired>=r.repeatCount)return;
+  alarms[r.id]=[];
+  r.times.forEach(t=>{
+    const[h,m]=t.split(':').map(Number);
+    r.days.forEach(d=>{
+      const ms=msUntil(d,h,m);if(!ms)return;
+      alarms[r.id].push(setTimeout(()=>fireFire(r.id),ms));
+    });
+  });
+}
+function scheduleAll(){data.reminders.filter(r=>r.active).forEach(scheduleReminder);}
+function clearTimers(id){(alarms[id]||[]).forEach(clearTimeout);alarms[id]=[];}
+
+function fireFire(id){
+  const idx=data.reminders.findIndex(r=>r.id===id);if(idx===-1)return;
+  const r=data.reminders[idx];
+  if(!r.active)return;if(!r.infinite&&r.fired>=r.repeatCount)return;
+  showBanner(r);
+  r.fired++;if(!r.infinite&&r.fired>=r.repeatCount)r.active=false;
+  data.reminders[idx]=r;save();updateBadge();
+  if(r.active)setTimeout(()=>scheduleReminder(r),1000);
+}
+
+function showBanner(r){
+  pendingFire=r;
+  document.getElementById('fireTitle').textContent=r.title;
+  document.getElementById('fireMsg').textContent=r.msg.length>70?r.msg.slice(0,70)+'…':r.msg;
+  document.getElementById('fireBanner').classList.add('show');
+}
+function openWA(){
+  if(!pendingFire||!data.phone)return;
+  const phone=data.phone.replace(/\D/g,'');
+  window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(pendingFire.msg),'_blank');
+  dismissBanner();
+}
+function dismissBanner(){document.getElementById('fireBanner').classList.remove('show');pendingFire=null;}
+
+const DN=['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
+function daysStr(days){
+  if(days.length===7)return 'כל יום';
+  if(days.length===5&&[0,1,2,3,4].every(d=>days.includes(d)))return 'ימי עבודה';
+  return days.map(d=>DN[d]).join(' ');
+}
+
+function renderList(){
+  const el=document.getElementById('rList');
+  const active=data.reminders.filter(r=>r.active);
+  const done=data.reminders.filter(r=>!r.active);
+  document.getElementById('list-sub').textContent=`${active.length} פעילות · ${done.length} הסתיימו`;
+  if(!data.reminders.length){el.innerHTML='<div class="empty"><div class="empty-icon">💚</div>עדיין אין תזכורות<br>צור תזכורת ראשונה</div>';return;}
+  el.innerHTML=[...active,...done].map(r=>{
+    const pct=r.infinite?100:Math.min(100,Math.round(r.fired/r.repeatCount*100));
+    return `<div class="r-card ${r.active?'':'paused'}">
+      <div class="r-avatar">${r.active?'💚':'✓'}</div>
+      <div class="r-body">
+        <div class="r-title">${esc(r.title)}</div>
+        <div class="r-text">${esc(r.msg)}</div>
+        <div class="tags">
+          <span class="tag">${r.times.join(', ')}</span>
+          <span class="tag">${daysStr(r.days)}</span>
+          ${r.infinite?'<span class="tag g">∞ ללא הגבלה</span>':`<span class="tag ${r.active?'':'w'}">${r.fired}/${r.repeatCount}</span>`}
+          ${!r.active?'<span class="tag w">הסתיים</span>':''}
+        </div>
+        ${!r.infinite?`<div class="prog"><div class="prog-fill" style="width:${pct}%"></div></div>`:''}
+      </div>
+      <div class="r-actions">
+        <button class="act-btn send" title="שלח עכשיו" onclick="sendNow(${r.id})">↗</button>
+        <button class="act-btn" title="${r.active?'השהה':'הפעל'}" onclick="toggleR(${r.id})">${r.active?'⏸':'▶'}</button>
+        <button class="act-btn del" title="מחק" onclick="delR(${r.id})">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function sendNow(id){
+  const r=data.reminders.find(x=>x.id===id);if(!r)return;
+  window.open('https://wa.me/'+data.phone.replace(/\D/g,'')+'?text='+encodeURIComponent(r.msg),'_blank');
+}
+function toggleR(id){
+  const r=data.reminders.find(x=>x.id===id);if(!r)return;
+  r.active=!r.active;
+  if(r.active)scheduleReminder(r);else clearTimers(id);
+  save();renderList();updateBadge();toast(r.active?'תזכורת הופעלה':'תזכורת הושהתה');
+}
+function delR(id){
+  clearTimers(id);data.reminders=data.reminders.filter(r=>r.id!==id);
+  save();renderList();updateBadge();toast('נמחק');
+}
+
+function renderStats(){
+  const active=data.reminders.filter(r=>r.active).length;
+  const fired=data.reminders.reduce((a,r)=>a+r.fired,0);
+  document.getElementById('s1').textContent=active;
+  document.getElementById('s2').textContent=fired;
+  let nearest=null;const now=new Date();
+  data.reminders.filter(r=>r.active).forEach(r=>{r.times.forEach(t=>{const[h,m]=t.split(':').map(Number);r.days.forEach(d=>{const ms=msUntil(d,h,m);if(ms&&(!nearest||ms<nearest))nearest=ms;});});});
+  document.getElementById('s3').textContent=nearest?(nearest/3600000).toFixed(1):'—';
+  const det=document.getElementById('statsDetail');
+  if(!data.reminders.length){det.innerHTML='<div style="color:var(--text3);font-size:14px;text-align:center;padding:2rem;">אין נתונים עדיין</div>';return;}
+  det.innerHTML='<div class="ct" style="margin-bottom:12px">פירוט</div>'+
+    data.reminders.map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+      <div><div style="font-size:14px;font-weight:500">${esc(r.title)}</div><div style="font-size:12px;color:var(--text3);margin-top:2px">${r.times.join(', ')} · ${daysStr(r.days)}</div></div>
+      <div style="text-align:left"><div style="font-family:var(--mono);font-size:13px;color:${r.active?'var(--green)':'var(--text3)'}">${r.fired}${r.infinite?'':'/'+r.repeatCount}</div><div style="font-size:11px;color:var(--text3)">${r.active?'פעיל':'הסתיים'}</div></div>
+    </div>`).join('');
+}
+
+function updateBadge(){
+  const n=data.reminders.filter(r=>r.active).length;
+  const el=document.getElementById('nav-badge');el.textContent=n;el.classList.toggle('show',n>0);
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+let toastT;
+function toast(msg,type=''){
+  const el=document.getElementById('toast');el.textContent=msg;
+  el.className='toast show'+(type?' '+type:'');
+  clearTimeout(toastT);toastT=setTimeout(()=>el.className='toast',3000);
+}
+
+init();
+</script>
+</body>
+</html>
