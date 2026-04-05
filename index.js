@@ -1,41 +1,70 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
+const express = require('express');
+const cors = require('cors');
+const qrcode = require('qrcode'); // חבילה חדשה להפיכת ה-QR לתמונה
 
-// אתחול הלקוח עם LocalAuth כדי לשמור את נתוני ההתחברות מקומית
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+let qrImageData = ""; // משתנה שיחזיק את התמונה של הברקוד
+let isReady = false;
+
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        headless: true,
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process',
+            '--disable-gpu'
+        ],
     }
 });
 
-// כשהמערכת דורשת סריקת ברקוד, נדפיס אותו לטרמינל
-client.on('qr', (qr) => {
-    console.log('סרוק את הברקוד הבא עם הוואטסאפ בטלפון שלך:');
-    qrcode.generate(qr, { small: true });
+// כשנוצר QR, נהפוך אותו ל-Data URL (תמונה שאפשר להציג ב-HTML)
+client.on('qr', async (qr) => {
+    console.log('New QR Received');
+    qrImageData = await qrcode.toDataURL(qr);
 });
 
-// ברגע שהחיבור עבר בהצלחה
 client.on('ready', () => {
-    console.log('הבוט מחובר ומוכן לשלוח הודעות! 💚');
-    
-    // דוגמה לשליחת הודעה:
-    // חובה להוסיף את הקידומת (ללא פלוס או אפסים) ואת הסיומת @c.us
-    const phoneNumber = "972501234567"; // תחליף למספר האמיתי
-    const message = "היי! זו הודעת ניסיון מהבוט האוטומטי שלנו 🤖";
-    
-    sendMessage(phoneNumber, message);
+    console.log('✅ WhatsApp Client is Ready!');
+    qrImageData = ""; // מנקים את הברקוד
+    isReady = true;
 });
 
-// פונקציית עזר לשליחת הודעות
-async function sendMessage(number, text) {
-    const chatId = `${number}@c.us`;
-    try {
-        await client.sendMessage(chatId, text);
-        console.log(`הודעה נשלחה בהצלחה למספר ${number}`);
-    } catch (err) {
-        console.error('שגיאה בשליחת ההודעה:', err);
-    }
-}
+client.on('authenticated', () => console.log('👍 Authenticated'));
 
-client.initialize();
+// נקודת קצה לבדיקת סטטוס וקבלת QR
+app.get('/status', (req, res) => {
+    res.json({ 
+        connected: isReady, 
+        qr: qrImageData 
+    });
+});
+
+// שליחת הודעה
+app.post('/send', async (req, res) => {
+    const { number, message } = req.body;
+    if (!isReady) return res.status(500).json({ error: "הבוט לא מחובר" });
+
+    try {
+        const chatId = number.includes('@c.us') ? number : `${number}@c.us`;
+        await client.sendMessage(chatId, message);
+        res.json({ success: true });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    client.initialize();
+});
