@@ -16,11 +16,13 @@ app.use(express.json());
 
 let qrImageData = ""; 
 let isReady = false;
+const resolvedChromePath = process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_PATH || '/usr/bin/chromium';
+console.log('Chromium executable path resolved to:', resolvedChromePath);
 
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
-        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_PATH || '/usr/bin/chromium',
+        executablePath: resolvedChromePath,
         headless: true,
         args: [
             '--no-sandbox',
