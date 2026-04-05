@@ -26,7 +26,9 @@ const client = new Client({
             '--no-sandbox',
             '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
-            '--single-process'
+            '--single-process',
+            '--no-zygote',
+            '--disable-gpu'
         ],
     }
 });
@@ -60,6 +62,18 @@ client.on('disconnected', (reason) => {
     isReady = false;
     client.initialize(); // ניסיון להתחבר מחדש
 });
+
+// התחל את לקוח הוואטסאפ (הכרחי כדי לקבל QR)
+client.initialize().catch(err => {
+    console.error('Failed to initialize WhatsApp client:', err);
+});
+
+// דף בית ובריאות לשירות
+app.get('/', (req, res) => {
+    res.send('Remember bot service is up. See /status');
+});
+
+app.get('/healthz', (req, res) => res.send('ok'));
 
 app.get('/status', (req, res) => {
     res.json({ 
